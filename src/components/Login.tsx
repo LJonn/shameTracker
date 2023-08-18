@@ -2,70 +2,70 @@ import { createSignal, createEffect, Show, createResource } from "solid-js";
 import supabase from "../utils/supabaseClient.js";
 import { AuthError } from "@supabase/supabase-js";
 
-const [email, setEmail] = createSignal("");
-const [password, setPassword] = createSignal("");
-const [errorMsg, setErrorMsg] = createSignal("");
-const [isLoading, setIsLoading] = createSignal(false);
-const [loggedIn, setLoggedIn] = createSignal();
-// const woot = createResource(async () => await supabase.auth.getUser())
-// console.log(await supabase.auth.getUser());
-// console.log(await supabase.auth.getSession());
-const [loggedData, { mutate, refetch }] = createResource(
-    async () => await supabase.auth.getUser()
-);
+const Login = () => {
+    const [email, setEmail] = createSignal("");
+    const [password, setPassword] = createSignal("");
+    const [errorMsg, setErrorMsg] = createSignal("");
+    const [isLoading, setIsLoading] = createSignal(false);
+    const [loggedIn, setLoggedIn] = createSignal();
+    // const woot = createResource(async () => await supabase.auth.getUser())
+    // console.log(await supabase.auth.getUser());
+    // console.log(await supabase.auth.getSession());
+    const [loggedData, { mutate, refetch }] = createResource(
+        async () => await supabase.auth.getUser()
+    );
 
-const login = async (e: SubmitEvent) => {
-    setIsLoading(true);
-    e.preventDefault();
-    try {
-        if (await getIsRegisteredByEmail()) {
-            await signIn();
-        } else {
-            await signUp();
+    const login = async (e: SubmitEvent) => {
+        setIsLoading(true);
+        e.preventDefault();
+        try {
+            if (await getIsRegisteredByEmail()) {
+                await signIn();
+            } else {
+                await signUp();
+            }
+            refetch();
+            setErrorMsg("");
+        } catch (error) {
+            if (error instanceof AuthError) {
+                setErrorMsg(error.message);
+            } else {
+                setIsLoading(false);
+                throw error;
+            }
         }
-        refetch();
-        setErrorMsg("");
-    } catch (error) {
-        if (error instanceof AuthError) {
-            setErrorMsg(error.message);
-        } else {
-            setIsLoading(false);
+        setIsLoading(false);
+    };
+
+    async function signUp() {
+        const { error } = await supabase.auth.signUp({
+            email: email(),
+            password: password(),
+        });
+        if (error) {
             throw error;
         }
     }
-    setIsLoading(false);
-};
 
-async function signUp() {
-    const { error } = await supabase.auth.signUp({
-        email: email(),
-        password: password(),
-    });
-    if (error) {
-        throw error;
+    async function signIn() {
+        const { error } = await supabase.auth.signInWithPassword({
+            email: email(),
+            password: password(),
+        });
+        if (error) {
+            throw error;
+        }
     }
-}
 
-async function signIn() {
-    const { error } = await supabase.auth.signInWithPassword({
-        email: email(),
-        password: password(),
-    });
-    if (error) {
-        throw error;
+    async function getIsRegisteredByEmail() {
+        let { error } = await supabase.rpc("get_user_id_by_email", {
+            user_email: email(),
+        });
+
+        if (error) throw error;
+        else return true;
     }
-}
 
-async function getIsRegisteredByEmail() {
-    let { error } = await supabase.rpc("get_user_id_by_email", {
-        user_email: email(),
-    });
-
-    if (error) throw error;
-    else return true;
-}
-
-const Login = () => {
     createEffect(() => {
         if (loggedData()?.data.user) {
             // console.log(loggedData()?.data);
