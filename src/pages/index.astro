@@ -1,11 +1,13 @@
 ---
-import { ErrorBoundary } from "solid-js";
-import Login from "../components/Login";
+import Name from "../components/Name";
+import Redirect from "../components/Redirect";
 import Layout from "../layouts/Layout.astro";
+// console.log(data.signedIn.user);
 ---
 
 <Layout>
+    <Redirect client:load />
     <div class="mx-auto p-8">
-        <Login client:load />
+        <span>Hello <Name client:load /></span>
     </div>
 </Layout>

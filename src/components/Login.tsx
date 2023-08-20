@@ -7,14 +7,9 @@ const Login = () => {
     const [password, setPassword] = createSignal("");
     const [errorMsg, setErrorMsg] = createSignal("");
     const [isLoading, setIsLoading] = createSignal(false);
-    const [loggedIn, setLoggedIn] = createSignal();
-    // const woot = createResource(async () => await supabase.auth.getUser())
-    // console.log(await supabase.auth.getUser());
-    // console.log(await supabase.auth.getSession());
-    const [loggedData, { mutate, refetch }] = createResource(
+    const [userData, { mutate, refetch }] = createResource(
         async () => await supabase.auth.getUser()
     );
-
     const login = async (e: SubmitEvent) => {
         setIsLoading(true);
         e.preventDefault();
@@ -67,63 +62,60 @@ const Login = () => {
     }
 
     createEffect(() => {
-        if (loggedData()?.data.user) {
+        if (userData()?.data.user) {
             // console.log(loggedData()?.data);
             location.assign("/test");
+            console.log("redirected");
         }
     });
     return (
         <>
-            <form
-                onSubmit={login}
-                class=" bg mx-auto flex max-w-md flex-col rounded-lg border border-slate-400 px-16 py-8 shadow-sm shadow-slate-400"
-            >
-                <div class="flex flex-col gap-4">
-                    <label class="flex flex-col">
-                        Enter e-mail:
-                        <input
-                            onInput={(e) => setEmail(e.target.value)}
-                            class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
-                            type="email"
-                            autocomplete="email"
-                        />
-                    </label>
-                    <label class="flex flex-col">
-                        Enter password:
-                        <input
-                            onInput={(e) => setPassword(e.target.value)}
-                            class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
-                            type="password"
-                            autocomplete="new-password"
-                        />
-                    </label>
-                </div>
-                <button
-                    class="mt-8 w-32 self-center rounded-full bg-gray-900 py-2 text-white hover:bg-gray-950"
-                    type="submit"
+            <Show when={userData()} fallback={<div>Loading...</div>}>
+                <form
+                    onSubmit={login}
+                    class=" bg mx-auto flex max-w-md flex-col rounded-lg border border-slate-400 px-16 py-8 shadow-sm shadow-slate-400"
                 >
-                    <Show
-                        when={isLoading()}
-                        fallback={<span>SignUp/LogIn</span>}
+                    <div class="flex flex-col gap-4">
+                        <label class="flex flex-col">
+                            Enter e-mail:
+                            <input
+                                onInput={(e) => setEmail(e.target.value)}
+                                class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
+                                type="email"
+                                autocomplete="email"
+                            />
+                        </label>
+                        <label class="flex flex-col">
+                            Enter password:
+                            <input
+                                onInput={(e) => setPassword(e.target.value)}
+                                class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
+                                type="password"
+                                autocomplete="new-password"
+                            />
+                        </label>
+                    </div>
+                    <button
+                        class="mt-8 w-32 self-center rounded-full bg-gray-900 py-2 text-white hover:bg-gray-950"
+                        type="submit"
                     >
-                        <div class="grid grid-cols-3 place-items-center">
-                            <span class="h-6 w-6 animate-spin rounded-full border-4 border-white border-r-transparent"></span>
-                            <span>Loading...</span>
+                        <Show
+                            when={isLoading()}
+                            fallback={<span>SignUp/LogIn</span>}
+                        >
+                            <div class="grid grid-cols-3 place-items-center">
+                                <span class="h-6 w-6 animate-spin rounded-full border-4 border-white border-r-transparent"></span>
+                                <span>Loading...</span>
+                            </div>
+                        </Show>
+                    </button>
+                    <Show when={errorMsg() != ""}>
+                        <div class="mt-8 border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+                            <p>{errorMsg()}</p>
                         </div>
                     </Show>
-                </button>
-                <Show when={errorMsg() != ""}>
-                    <div class="mt-8 border border-red-400 bg-red-100 px-4 py-3 text-red-700">
-                        <p>{errorMsg()}</p>
-                    </div>
-                </Show>
-            </form>
-            <a
-                class="mt-8 w-1/2 self-center rounded-full bg-gray-900 px-2 py-2 text-white hover:bg-gray-950"
-                href="/test"
-            >
-                test
-            </a>
+                </form>
+            </Show>
         </>
     );
 };
