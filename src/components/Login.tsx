@@ -36,6 +36,11 @@ const Login = () => {
         const { error } = await supabase.auth.signUp({
             email: email(),
             password: password(),
+            options: {
+                data: {
+                    username: email().split("@")[0],
+                },
+            },
         });
         if (error) {
             throw error;
@@ -63,8 +68,7 @@ const Login = () => {
 
     createEffect(() => {
         if (userData()?.data.user) {
-            // console.log(loggedData()?.data);
-            location.assign("/test");
+            location.assign("/");
             console.log("redirected");
         }
     });

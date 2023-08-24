@@ -1,4 +1,9 @@
 ---
+import Navigation from "../components/Navigation";
+const { hideNavbar } = Astro.props;
+interface Props {
+    hideNavbar?: boolean;
+}
 ---
 
 <!DOCTYPE html>
@@ -12,6 +17,7 @@
     </head>
 
     <body>
+        {!hideNavbar && <Navigation client:load />}
         <slot />
     </body>
 </html>

@@ -1,12 +1,24 @@
 import { createEffect, createResource } from "solid-js";
 import supabase from "../utils/supabaseClient.js";
 
-const Name = () => {
-    const [email, { mutate, refetch }] = createResource(
+// const {
+//     data: { user },
+// } = await supabase.auth.getUser();
+// let metadata = user?.user_metadata;
+// console.log(metadata);
+
+export default function Name() {
+    const [userSession, { mutate, refetch }] = createResource(
         async () => await supabase.auth.getSession()
     );
 
-    return <>{email()?.data.session?.user.email}</>;
-};
-
-export default Name;
+    return (
+        <>
+            <div>email: {userSession()?.data.session?.user.email}</div>
+            <div>
+                username:{" "}
+                {userSession()?.data.session?.user.user_metadata.username}
+            </div>
+        </>
+    );
+}
