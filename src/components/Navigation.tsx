@@ -12,6 +12,12 @@ export default function Navigation() {
                 <ul class="flex flex-row justify-end gap-4 p-4">
                     <li
                         class="cursor-pointer rounded-lg bg-slate-400 p-2"
+                        onClick={() => location.assign("/exercises")}
+                    >
+                        Exercises
+                    </li>
+                    <li
+                        class="cursor-pointer rounded-lg bg-slate-400 p-2"
                         onClick={() => location.assign("/profile")}
                     >
                         Profile
