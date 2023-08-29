@@ -95,12 +95,22 @@ export default function PullUp() {
             </button>
 
             <label class="flex w-32 flex-col">
-                Enter reps:
+                Reps:
                 <input
                     onInput={(e) => setReps(Number(e.target.value))}
                     class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
                     type="number"
                     autocomplete="reps"
+                />
+            </label>
+
+            <label class="flex w-32 flex-col">
+                Extra weight:
+                <input
+                    onInput={(e) => setExtraWeight(Number(e.target.value))}
+                    class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
+                    type="number"
+                    autocomplete="weight"
                 />
             </label>
 
