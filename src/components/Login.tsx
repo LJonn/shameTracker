@@ -15,8 +15,10 @@ const Login = () => {
         e.preventDefault();
         try {
             if (await getIsRegisteredByEmail()) {
+                console.log("signin");
                 await signIn();
             } else {
+                console.log("signUPP");
                 await signUp();
             }
             refetch();
@@ -58,12 +60,13 @@ const Login = () => {
     }
 
     async function getIsRegisteredByEmail() {
-        let { error } = await supabase.rpc("get_user_id_by_email", {
+        let { data, error } = await supabase.rpc("get_user_id_by_email", {
             user_email: email(),
         });
-
         if (error) throw error;
-        else return true;
+        if (!data) {
+            return false;
+        } else return true;
     }
 
     createEffect(() => {
