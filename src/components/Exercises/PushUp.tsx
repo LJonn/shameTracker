@@ -59,7 +59,7 @@ export default function PullUp() {
                     ended_at: new Date(currentTime()),
                     reps: reps(),
                     extra_weight: extraWeight(),
-                    exercise_id: 1,
+                    exercise_id: 2,
                 },
             ])
             .select();
@@ -74,7 +74,7 @@ export default function PullUp() {
     };
     return (
         <>
-            <h2 class="font-bold">Pull Up! My favorite!</h2>
+            <h2 class="font-bold">Push it Up!</h2>
             <button
                 class="m-4 rounded-lg bg-slate-200 p-4"
                 onClick={startTimer}

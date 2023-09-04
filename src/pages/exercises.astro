@@ -1,8 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PullUp from "../components/Exercises/PullUp";
+import PushUp from "../components/Exercises/PushUp";
+import ExerciseContainer from "../components/ExerciseContainer.astro";
 ---
 
 <Layout>
-    <PullUp client:load />
+    <div class="mt-8 flex flex-wrap justify-center gap-8">
+        <ExerciseContainer>
+            <PullUp client:load />
+        </ExerciseContainer>
+        <ExerciseContainer>
+            <PushUp client:load />
+        </ExerciseContainer>
+    </div>
 </Layout>
