@@ -3,15 +3,25 @@ import Layout from "../layouts/Layout.astro";
 import PullUp from "../components/Exercises/PullUp";
 import PushUp from "../components/Exercises/PushUp";
 import ExerciseContainer from "../components/ExerciseContainer.astro";
+import { ExerciseType } from "../utils/ExerciseType";
+import Exercise from "../components/Exercises/Exercise";
 ---
 
 <Layout>
     <div class="mt-8 flex flex-wrap justify-center gap-8">
         <ExerciseContainer>
-            <PullUp client:load />
+            <Exercise
+                title="Pull Up! My favorite!!!"
+                exercise={ExerciseType.PULL_UP}
+                client:load
+            />
         </ExerciseContainer>
         <ExerciseContainer>
-            <PushUp client:load />
+            <Exercise
+                title="Push it Up!"
+                exercise={ExerciseType.PUSH_UP}
+                client:load
+            />
         </ExerciseContainer>
     </div>
 </Layout>
