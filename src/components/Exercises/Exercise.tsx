@@ -96,6 +96,7 @@ export default function Exercise(props: ExerciseProps) {
                 "exercise, exercises_log(id, user_id, started_at, reps, extra_weight, ended_at, exercise_id)"
             )
             .eq("id", props.exercise)
+            .eq("user_id", (await supabase.auth.getSession()).data.session?.user.id)
             .limit(10, { foreignTable: "exercises_log" });
         if (error) {
             throw error;
