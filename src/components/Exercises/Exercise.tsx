@@ -90,13 +90,15 @@ export default function Exercise(props: ExerciseProps) {
     };
 
     async function showExerciseLogs() {
+        const userId = (await supabase.auth.getSession()).data.session?.user.id
+        console.log(userId)
         let { data: exercises, error } = await supabase
             .from("exercises")
             .select(
                 "exercise, exercises_log(id, user_id, started_at, reps, extra_weight, ended_at, exercise_id)"
             )
             .eq("id", props.exercise)
-            .eq("user_id", (await supabase.auth.getSession()).data.session?.user.id)
+            .eq("user_id", userId)
             .limit(10, { foreignTable: "exercises_log" });
         if (error) {
             throw error;
