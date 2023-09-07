@@ -8,6 +8,7 @@ import {
 } from "solid-js";
 import supabase from "../../utils/supabaseClient.js";
 import SuccessMessage from "../SuccessMessage.jsx";
+import ScreenDimController from "../../utils/ScreenDimController";
 import type { ExerciseType } from "../../utils/ExerciseType";
 
 type ExerciseProps = {
@@ -53,14 +54,16 @@ export default function Exercise(props: ExerciseProps) {
         });
     });
 
-    const startTimer = () => {
+    const startTimer = async () => {
         setRunning(true);
         setCurrentTime(now());
         setTimeStart(now());
+        ScreenDimController.disableScreenDim();
     };
 
     const stopTimer = () => {
         setRunning(false);
+        ScreenDimController.enableScreenDim();
     };
 
     const submit = async () => {
