@@ -90,7 +90,7 @@ export default function Exercise(props: ExerciseProps) {
     };
 
     async function showExerciseLogs() {
-        const userId = (await supabase.auth.getSession()).data.session?.user.id
+        const userId = (await supabase.auth.getSession()).data.session?.user.id;
         let { data: exercises, error } = await supabase
             .from("exercises")
             .select(
@@ -98,6 +98,10 @@ export default function Exercise(props: ExerciseProps) {
             )
             .eq("id", props.exercise)
             .eq("exercises_log.user_id", userId)
+            .order("started_at", {
+                foreignTable: "exercises_log",
+                ascending: false,
+            })
             .limit(10, { foreignTable: "exercises_log" });
         if (error) {
             throw error;
@@ -170,7 +174,11 @@ export default function Exercise(props: ExerciseProps) {
 
             <For
                 each={exercisesLog()?.[0].exercises_log}
-                fallback={<div>Loading...</div>}
+                fallback={
+                    <Show when={exercisesLog() == undefined}>
+                        <div>Loading...</div>
+                    </Show>
+                }
             >
                 {(item) => (
                     <div>
