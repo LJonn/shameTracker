@@ -30,7 +30,7 @@ export default function Exercise(props: ExerciseProps) {
     const [showSuccess, setShowSuccess] = createSignal(false);
     const [extraWeight, setExtraWeight] = createSignal(0);
     const [timerStarted, setTimerStarted] = createSignal(false);
-    const [invertOn3, setInvertOn3] = createSignal(0);
+    const [deleteMode, setDeleteMode] = createSignal(false);
     const [exercisesLog, { refetch: refetchResource }] =
         createResource(showExerciseLogs);
 
@@ -141,22 +141,6 @@ export default function Exercise(props: ExerciseProps) {
         refetchResource();
     }
 
-    function invertOnTripleClick() {
-        setInvertOn3((value) => value + 1);
-    }
-    let timeout: NodeJS.Timeout | undefined;
-    createEffect(() => {
-        if (invertOn3() == 1) {
-            timeout = setTimeout(() => {
-                setInvertOn3(0);
-            }, 1000);
-        } else if (invertOn3() == 3) {
-            setExtraWeight((value) => -1 * value);
-            setInvertOn3(0);
-            clearTimeout(timeout);
-        }
-    });
-
     return (
         <>
             <h2 class="font-bold">{mergedProps.title}</h2>
@@ -204,6 +188,7 @@ export default function Exercise(props: ExerciseProps) {
                         class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
                         type="number"
                         autocomplete="reps"
+                        value={reps()}
                     />
                 </label>
             </Show>
@@ -215,7 +200,6 @@ export default function Exercise(props: ExerciseProps) {
                     class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
                     type="number"
                     autocomplete="weight"
-                    onClick={() => invertOnTripleClick()}
                     value={extraWeight()}
                 />
             </label>
@@ -226,37 +210,73 @@ export default function Exercise(props: ExerciseProps) {
             >
                 Submit
             </button>
+
+            <input
+                class="invisible"
+                type="checkbox"
+                onChange={(e) => setDeleteMode(e.target.checked)}
+                id={mergedProps.exercise.toString()}
+            >
+                DeleteMode
+            </input>
+            <label
+                class={
+                    deleteMode()
+                        ? "inline-block w-32 cursor-pointer rounded-full bg-red-700 py-2 text-center text-white"
+                        : "inline-block w-32 cursor-pointer rounded-full bg-gray-300 py-2 text-center"
+                }
+                for={mergedProps.exercise.toString()}
+            >
+                DeleteMode
+            </label>
+
             <Show when={showSuccess()}>
                 <SuccessMessage message="Reps recorded, shame decreased!" />
             </Show>
 
-            <For
-                each={exercisesLog()?.[0].exercises_log}
-                fallback={
-                    <Show when={exercisesLog() == undefined}>
-                        <div>Loading...</div>
-                    </Show>
-                }
-            >
-                {(item) => (
-                    <div>
-                        <span class="m-2">reps: {item.reps}</span>
-                        <span class="m-2">weight: {item.extra_weight}</span>
-                        <span class="m-2">
-                            time:{" "}
-                            {(new Date(item.ended_at).valueOf() -
-                                new Date(item.started_at).valueOf()) /
-                                1000}
-                        </span>
-                        <button
-                            class="mx-4"
-                            onClick={() => deleteExerciseLog(item.id)}
-                        >
-                            X
-                        </button>
-                    </div>
-                )}
-            </For>
+            <div class="grid grid-cols-4">
+                <span class="tebold">Reps (N)</span>
+                <span>Weight (kg)</span>
+                <span>Time (s)</span>
+                <span>Delete</span>
+                <For
+                    each={exercisesLog()?.[0].exercises_log}
+                    fallback={
+                        <Show when={exercisesLog() == undefined}>
+                            <div>Loading...</div>
+                        </Show>
+                    }
+                >
+                    {(item) => (
+                        <>
+                            <span class="border border-gray-700">
+                                {item.reps}
+                            </span>
+                            <span class="border border-gray-700">
+                                {item.extra_weight}
+                            </span>
+                            <span class="border border-gray-700">
+                                {" "}
+                                {(new Date(item.ended_at).valueOf() -
+                                    new Date(item.started_at).valueOf()) /
+                                    1000}
+                            </span>
+                            <div class="border border-gray-700 text-center">
+                                <button
+                                    class={
+                                        deleteMode()
+                                            ? "w-full text-red-600"
+                                            : "invisible"
+                                    }
+                                    onClick={() => deleteExerciseLog(item.id)}
+                                >
+                                    X
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </For>
+            </div>
         </>
     );
 }
