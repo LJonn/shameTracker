@@ -29,6 +29,8 @@ export default function Exercise(props: ExerciseProps) {
     const [currentTime, setCurrentTime] = createSignal(now());
     const [showSuccess, setShowSuccess] = createSignal(false);
     const [extraWeight, setExtraWeight] = createSignal(0);
+    const [timerStarted, setTimerStarted] = createSignal(false);
+    const [invertOn3, setInvertOn3] = createSignal(0);
     const [exercisesLog, { refetch: refetchResource }] =
         createResource(showExerciseLogs);
 
@@ -64,11 +66,13 @@ export default function Exercise(props: ExerciseProps) {
         setRunning(true);
         setCurrentTime(now());
         setTimeStart(now());
+        setTimerStarted(true);
         ScreenDimController.disableScreenDim();
     };
 
     const stopTimer = () => {
         setRunning(false);
+        setTimerStarted(false);
         ScreenDimController.enableScreenDim();
     };
 
@@ -137,40 +141,60 @@ export default function Exercise(props: ExerciseProps) {
         refetchResource();
     }
 
+    function invertOnTripleClick() {
+        setInvertOn3((value) => value + 1);
+    }
+    let timeout: NodeJS.Timeout | undefined;
+    createEffect(() => {
+        if (invertOn3() == 1) {
+            timeout = setTimeout(() => {
+                setInvertOn3(0);
+            }, 1000);
+        } else if (invertOn3() == 3) {
+            setExtraWeight((value) => -1 * value);
+            setInvertOn3(0);
+            clearTimeout(timeout);
+        }
+    });
+
     return (
         <>
             <h2 class="font-bold">{mergedProps.title}</h2>
 
             <Show when={mergedProps.timer}>
-                <button
-                    class="m-2 rounded-lg bg-slate-200 p-4"
-                    onClick={startTimer}
-                >
-                    Start
-                </button>
-                <div class="inline-block rounded-lg bg-slate-200 p-1">
-                    <span class="mx-2">
-                        {getMinutes(currentTime() - timeStart())} min
-                    </span>
-                    <span class="mx-2">
-                        {getSeconds(currentTime() - timeStart())} s
-                    </span>
-                    <div class="mx-2 inline-block">
-                        {getDiv100Seconds(currentTime() - timeStart())} &nbsp;
-                        <span class="inline-flex flex-col text-center align-middle">
-                            s
-                            <span class="border-t border-solid border-black">
-                                100
-                            </span>
-                        </span>
+                <div class="">
+                    <Show
+                        when={timerStarted()}
+                        fallback={
+                            <button
+                                class="my-2 w-full rounded-lg bg-green-300 p-4"
+                                onClick={startTimer}
+                            >
+                                Start
+                            </button>
+                        }
+                    >
+                        <button
+                            class="my-2 w-full rounded-lg bg-red-300 p-4"
+                            onClick={stopTimer}
+                        >
+                            End
+                        </button>
+                    </Show>
+                    <div class="w-full rounded-lg bg-slate-200 p-2 text-center text-3xl">
+                        {getMinutes(currentTime() - timeStart())
+                            .toString()
+                            .padStart(2, "0")}{" "}
+                        :&nbsp;
+                        {getSeconds(currentTime() - timeStart())
+                            .toString()
+                            .padStart(2, "0")}{" "}
+                        :&nbsp;
+                        {getDiv100Seconds(currentTime() - timeStart())
+                            .toString()
+                            .padStart(2, "0")}{" "}
                     </div>
                 </div>
-                <button
-                    class="m-2 rounded-lg bg-slate-200 p-4"
-                    onClick={stopTimer}
-                >
-                    End
-                </button>
             </Show>
             <Show when={mergedProps.reps}>
                 <label class="flex w-32 flex-col">
@@ -191,6 +215,8 @@ export default function Exercise(props: ExerciseProps) {
                     class="rounded-lg bg-slate-200 px-2 py-1.5 shadow-sm shadow-slate-400 outline-none"
                     type="number"
                     autocomplete="weight"
+                    onClick={() => invertOnTripleClick()}
+                    value={extraWeight()}
                 />
             </label>
 
