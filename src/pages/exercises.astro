@@ -1,7 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PullUp from "../components/Exercises/PullUp";
-import PushUp from "../components/Exercises/PushUp";
 import ExerciseContainer from "../components/ExerciseContainer.astro";
 import { ExerciseType } from "../utils/ExerciseType";
 import Exercise from "../components/Exercises/Exercise";
@@ -45,6 +43,38 @@ import Exercise from "../components/Exercises/Exercise";
             <Exercise
                 title="Burpies"
                 exercise={ExerciseType.BURPIES}
+                timer={false}
+                client:load
+            />
+        </ExerciseContainer>
+        <ExerciseContainer>
+            <Exercise
+                title="L-sit"
+                exercise={ExerciseType.L_SIT}
+                reps={false}
+                client:load
+            />
+        </ExerciseContainer>
+        <ExerciseContainer>
+            <Exercise
+                title="L-sit raises"
+                exercise={ExerciseType.L_SIT_RAISES}
+                timer={false}
+                client:load
+            />
+        </ExerciseContainer>
+        <ExerciseContainer>
+            <Exercise
+                title="Hanging L-sit"
+                exercise={ExerciseType.HANGING_L_SIT}
+                reps={false}
+                client:load
+            />
+        </ExerciseContainer>
+        <ExerciseContainer>
+            <Exercise
+                title="Hanging L-sit raises"
+                exercise={ExerciseType.HANGING_L_SIT_RAISES}
                 timer={false}
                 client:load
             />
