@@ -1,6 +1,8 @@
 import { Show, createSignal } from "solid-js";
 import supabase from "../utils/supabaseClient.js";
 import SuccessMessage from "./SuccessMessage.jsx";
+import ProfileLogs from "./ProfileLogs.jsx";
+import { refetchLogs } from "./ProfileLogs.jsx";
 
 export default function Profile() {
     const [username, setUsername] = createSignal("");
@@ -34,6 +36,7 @@ export default function Profile() {
             .insert([{ weight: inputWeight() }])
             .select();
 
+        refetchLogs();
         setShowSuccess(true);
         setTimeout(() => {
             setShowSuccess(false);
@@ -64,7 +67,7 @@ export default function Profile() {
             </label>
 
             <button
-                class="mt-8 w-32 self-center rounded-full bg-gray-900 py-2 text-white hover:bg-gray-950"
+                class="m-8 w-32 self-center rounded-full bg-gray-900 py-2 text-white hover:bg-gray-950"
                 onClick={submit}
             >
                 Submit changes
@@ -72,6 +75,7 @@ export default function Profile() {
             <Show when={showSuccess()}>
                 <SuccessMessage message="Profile updated!" />
             </Show>
+            <ProfileLogs />
         </div>
     );
 }
