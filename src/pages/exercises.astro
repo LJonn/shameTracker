@@ -49,6 +49,14 @@ import Exercise from "../components/Exercises/Exercise";
         </ExerciseContainer>
         <ExerciseContainer>
             <Exercise
+                title="Squat"
+                exercise={ExerciseType.SQUAT}
+                timer={false}
+                client:load
+            />
+        </ExerciseContainer>
+        <ExerciseContainer>
+            <Exercise
                 title="L-sit"
                 exercise={ExerciseType.L_SIT}
                 reps={false}

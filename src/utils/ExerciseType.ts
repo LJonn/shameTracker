@@ -8,4 +8,5 @@ export enum ExerciseType {
     L_SIT_RAISES = 7,
     HANGING_L_SIT = 8,
     HANGING_L_SIT_RAISES = 9,
+    SQUAT = 10,
 }
